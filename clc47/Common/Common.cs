@@ -86,24 +86,16 @@ namespace calc
             d *= dto.superBuf;
             d = Math.Ceiling(d);
             //
-            double tmp = 0;
+            double tmp = d;
             if (cri) {
-                tmp = d;
                 d += Math.Ceiling(tmp * 0.5)
                   + buf("CRI_POW", tmp, dto.slv)
                   + buf("CRI_DEF", tmp, dto.slv);
             }
             //
-            if (chkSSP(dto.sp1) > 0)
-            {
-                tmp = d;
-                d += buf("REG_Z", tmp, dto.slv)
-                  + buf("REG_SP", tmp, dto.slv);
-            }
-            else
-            {
-                d += buf("REG_Z", d, dto.slv);
-            }
+            tmp = d;
+            d += buf("REG_Z", tmp, dto.slv);
+            if (chkSSP(dto.sp1) > 0) d += buf("REG_SP", tmp, dto.slv);
             //
             d *= dto.partyBuf;
             d = Math.Ceiling(d);
@@ -112,7 +104,7 @@ namespace calc
             d *= dto.breakBuf;
             d = Math.Ceiling(d);
             //
-            d -= buf("CUT", d, 0);
+            d -= buf("CUT", d, 1);
             return (int)Math.Max(d, 1);
         }
 
@@ -126,7 +118,6 @@ namespace calc
         // バフ
         public static int buf(string pk, double dmg_, int slv_)
         {
-            //T_bufDto d = logic.Loadbuf(pk);
             T_bufDto d = new T_bufDto();
             foreach (T_bufDto i in dto.buflist)
             {
@@ -146,52 +137,6 @@ namespace calc
                     d.slvxl * d.cntxl +
                     d.slvxxl * d.cntxxl
                 );
-        }
-
-        public static int antibuf(string pk, double realdmg_, int slv_, double baseNum)
-        {
-            T_bufDto d = new T_bufDto();
-            foreach (T_bufDto i in dto.buflist)
-            {
-                if (i.pk == pk) d = i;
-            }
-            realdmg_ -= (slv_ - 1) * (
-                d.slvs * d.cnts +
-                d.slvm * d.cntm +
-                d.slvl * d.cntl +
-                d.slvxl * d.cntxl +
-                d.slvxxl * d.cntxxl
-                );
-            return (int)(realdmg_ / (Math.Min(
-                d.bufs * d.cnts +
-                d.bufm * d.cntm +
-                d.bufl * d.cntl +
-                d.bufxl * d.cntxl +
-                d.bufxxl * d.cntxxl,
-                d.upper) + 1 + baseNum));
-        }
-
-        public static int antibuf_d(string pk, double realdmg_, int slv_)
-        {
-            T_bufDto d = new T_bufDto();
-            foreach (T_bufDto i in dto.buflist)
-            {
-                if (i.pk == pk) d = i;
-            }
-            realdmg_ += (slv_ - 1) * (
-                d.slvs * d.cnts +
-                d.slvm * d.cntm +
-                d.slvl * d.cntl +
-                d.slvxl * d.cntxl +
-                d.slvxxl * d.cntxxl
-                );
-            return (int)(realdmg_ / (1 - Math.Min(
-                d.bufs * d.cnts +
-                d.bufm * d.cntm +
-                d.bufl * d.cntl +
-                d.bufxl * d.cntxl +
-                d.bufxxl * d.cntxxl,
-                d.upper)));
         }
 
         private static int bufSP(double atk_, T_displayDto dto)
@@ -242,29 +187,101 @@ namespace calc
             return (int)result;
         }
 
-        private double anti_def(double dmg_, double atk_)
+        public static int antibuf_up(string pk, double realdmg_, int slv_, double baseNum)
+        {
+            T_bufDto d = new T_bufDto();
+            foreach (T_bufDto i in dto.buflist)
+            {
+                if (i.pk == pk) d = i;
+            }
+            realdmg_ -= (slv_ - 1) * (
+                d.slvs * d.cnts +
+                d.slvm * d.cntm +
+                d.slvl * d.cntl +
+                d.slvxl * d.cntxl +
+                d.slvxxl * d.cntxxl
+                );
+            return (int)(realdmg_ / (1 + baseNum + Math.Min(
+                d.bufs * d.cnts +
+                d.bufm * d.cntm +
+                d.bufl * d.cntl +
+                d.bufxl * d.cntxl +
+                d.bufxxl * d.cntxxl,
+                d.upper)));
+        }
+
+        public static int antibuf_down(string pk, double realdmg_, int slv_)
+        {
+            T_bufDto d = new T_bufDto();
+            foreach (T_bufDto i in dto.buflist)
+            {
+                if (i.pk == pk) d = i;
+            }
+            realdmg_ += (slv_ - 1) * (
+                d.slvs * d.cnts +
+                d.slvm * d.cntm +
+                d.slvl * d.cntl +
+                d.slvxl * d.cntxl +
+                d.slvxxl * d.cntxxl
+                );
+            return (int)(realdmg_ / (1 - Math.Min(
+                d.bufs * d.cnts +
+                d.bufm * d.cntm +
+                d.bufl * d.cntl +
+                d.bufxl * d.cntxl +
+                d.bufxxl * d.cntxxl,
+                d.upper)));
+        }
+
+        public static int antislv(string pk, double realdmg_, int slv_)
+        {
+            T_bufDto d = new T_bufDto();
+            foreach (T_bufDto i in dto.buflist)
+            {
+                if (i.pk == pk) d = i;
+            }
+            realdmg_ -= (slv_ - 1) * (
+                d.slvs * d.cnts +
+                d.slvm * d.cntm +
+                d.slvl * d.cntl +
+                d.slvxl * d.cntxl +
+                d.slvxxl * d.cntxxl
+                );
+            return (int)realdmg_;
+        }
+
+        private double antiBase(double dmg_, double atk_)
         {
             if (dmg_ == 0) return 0;
             return Math.Max(atk_ * atk_ / dmg_ - atk_, 0);
         }
+
         private int anti(double atk_)
         {
             double d = dto.realdmg;
-            d += antibuf("CUT", d, 0, 0);
-            d /= dto.breakBuf;
-            d /= 1 + dto.chrBonus / 100;
-            d /= dto.partyBuf;
-            if (chkSSP(dto.sp1) > 0)
-            {
-                d -= antibuf("REG_Z", d, dto.slv, 0)
-                   + antibuf("REG_SP", d, 0, 0);
-            }
-            d -= antibuf("CRI_POW", d, dto.slv, 0)
-               + antibuf("CRI_DEF", d, dto.slv, 0.5);
-            d /= dto.superBuf;
-            d /= dto.colorBuf;
-            d = anti_def(d, atk_);
-            return (int)antibuf_d("DEF", d, dto.slv);
+            d = antibuf_down("CUT", d, 1);
+            d /= Math.Floor(dto.breakBuf);
+            d /= Math.Floor(1 + dto.chrBonus / 100);
+            d /= Math.Floor(dto.partyBuf);
+            //
+            if (chkSSP(dto.sp1) > 0) d = antislv("REG_SP", d, dto.slv);
+            d = antislv("REG_Z", d, dto.slv);
+
+            double tmp = d;
+            if (chkSSP(dto.sp1) > 0) d = antibuf_up("REG_SP", tmp, 1, 0);
+            d = antibuf_up("REG_Z", tmp, 1, 0);
+            //
+            d = antislv("CRI_POW", d, dto.slv);
+            d = antislv("CRI_DEF", d, dto.slv);
+
+            tmp = d;
+            d = antibuf_up("CRI_POW", tmp, 1, 0.5);
+            d = antibuf_up("CRI_DEF", tmp, 1, 0);
+            //
+            d /= Math.Floor(dto.superBuf);
+            d /= Math.Floor(dto.colorBuf);
+            d = antiBase(d, atk_);
+            return (int)antibuf_down("DEF", d, dto.slv);
         }
     }
 }
