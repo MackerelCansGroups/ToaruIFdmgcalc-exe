@@ -25,7 +25,7 @@ namespace calc
             ChkBoxView();
             ChangeEv();
             result();
-            //this.Text = "とあるIFダメージ計算";
+            //this.Text = "とあるIFダメージ計算@ちゃんサバ";
             //this.Icon = new System.Drawing.Icon(@"icon.ico");
         }
 
@@ -85,7 +85,8 @@ namespace calc
                 { "HP", label_hp },
                 { "MAXHP", label_maxhp },
                 { "ATKBONUS", label_atkBonus },
-                { "CHRBONUS", label_chrBonus }
+                { "CHRBONUS", label_chrBonus },
+                { "DMG", label_antidmg }
             };
             var table2 = new Dictionary<string, TextBox>
             {
@@ -95,7 +96,8 @@ namespace calc
                 { "HP", textBox_hp },
                 { "MAXHP", textBox_maxhp },
                 { "ATKBONUS", textBox_atkBonus },
-                { "CHRBONUS", textBox_chrBonus }
+                { "CHRBONUS", textBox_chrBonus },
+                { "DMG", textBox_antidmg }
             };
 
             dis.txt = logic.Loadtxtall();
@@ -232,144 +234,6 @@ namespace calc
             }
         }
 
-        private void ChangeEv()
-        {
-            CheckBox[] chk = new CheckBox[] { 
-                checkBox_match,
-                checkBox_pm,
-                checkBox_pl,
-                checkBox_fuku,
-                checkBox_shien,
-                checkBox_vec,
-                checkBox_vecm,
-                checkBox_vecl,
-                checkBox_lnk,
-                checkBox_anas,
-                checkBox_anam,
-                checkBox_break
-            };
-            foreach (CheckBox i in chk) i.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
-
-            ComboBox[] com = new ComboBox[]
-            {
-                comboBox_type,
-                comboBox_super,
-                comboBox_bonus,
-                comboBox_def,
-                comboBox_sp,
-                comboBox_sp2
-            };
-            foreach (ComboBox i in com) i.SelectedIndexChanged += new System.EventHandler(this.comboBox_SelectedIndexChanged);
-
-            TextBox[] txt = new TextBox[]
-            {
-                textBox_slv,
-                textBox_atkA,
-                textBox_atkB,
-                textBox_hp,
-                textBox_maxhp,
-                textBox_atkBonus,
-                textBox_chrBonus,
-                textBox_antidmg
-            };
-            foreach (TextBox i in txt) i.TextChanged += new System.EventHandler(this.textBox_TextChanged);
-
-            comboBox_def.TextChanged += new System.EventHandler(this.textBox_TextChanged);
-            trackBar_n.Scroll += new System.EventHandler(this.trackBar_n_Scroll);
-            dataGridView_buf.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_buf_CellValueChanged);
-        }
-
-        private void Button_ClickSav(object sender, EventArgs e)
-        {
-            var table = new Dictionary<string, ComboBox>
-            {
-                { "COL", comboBox_type },
-                { "SUP", comboBox_super },
-                { "BONUS", comboBox_bonus },
-                { "DEF", comboBox_def },
-                { "SP1", comboBox_sp },
-                { "SP2", comboBox_sp2 }
-            };
-            dis.idx = logic.Loadidxall();
-            foreach (T_objectDto i in dis.idx)
-            {
-                foreach (string key in table.Keys) {
-                    if(i.pk == key) i.val = logic.tryStr2(table[key].SelectedIndex.ToString());
-                }
-            }
-            logic.UpdateBuf(dis.buflist);
-            logic.UpdateTxt(dis.txt);
-            logic.UpdateChk(dis.chk);
-            logic.UpdateIdx(dis.idx);
-            MessageBox.Show("現在の状態を保存しました。", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-        private void Button_ClickClear(object sender, EventArgs e)
-        {
-            ComBoxView2();
-            TxtBoxView();
-            ChkBoxView();
-            //
-            DataGridView d = dataGridView_buf;
-            for (int i = 0; i < d.RowCount; i++)
-            {
-                for (int j = 0; j < d.ColumnCount; j++) d[j, i].Value = "0";
-            }
-            DataGridView d2 = dataGridView_res;
-            for (int i = 0; i < d2.RowCount; i++)
-            {
-                for (int j = 0; j < d2.ColumnCount; j++) d2[j, i].Value = "0";
-            }
-            InitGrid();
-        }
-        private void Button_ClickOut(object sender, EventArgs e)
-        {
-            using (StreamWriter sw = new StreamWriter(@"result.txt", false, Encoding.UTF8))
-            {
-                sw.WriteLine("計算結果");
-                sw.WriteLine("加護(中, 大) :実値");
-                DataGridView d = dataGridView_res;
-                for (int j = 0; j < d.ColumnCount; j++)
-                {
-                    sw.WriteLine(col2[j]);
-                    for (int i = 0; i < d.RowCount; i++)
-                    {
-                        sw.WriteLine(dis.feslist[i].header + " :" + d[j, i].Value);
-                    }
-                    sw.WriteLine("");
-                }
-            }
-            System.Diagnostics.Process.Start("notepad.exe", @"result.txt");
-        }
-        private void textBox_TextChanged(object sender, EventArgs e)
-        {
-            InitTxt();
-            result();
-        }
-
-        private void checkBox_CheckedChanged(object sender, EventArgs e)
-        {
-            InitChk();
-            result();
-        }
-
-        private void comboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            InitCom();
-            result();
-        }
-
-        private void dataGridView_buf_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
-            InitGrid();
-            result();
-        }
-
-        private void trackBar_n_Scroll(object sender, EventArgs e)
-        {
-            InitTxt();
-            result();
-        }
-
         private void InitTxt()
         {
             foreach (T_objectDto i in dis.txt)
@@ -408,6 +272,10 @@ namespace calc
                         dis.chrBonus = logic.tryStr2(textBox_chrBonus.Text);
                         i.val = dis.chrBonus;
                         break;
+                    case "DMG":
+                        dis.realdmg = logic.tryStr2(textBox_antidmg.Text);
+                        i.val = dis.realdmg;
+                        break;
                     case "BUFNUM":
                         dis.num = trackBar_n.Value;
                         i.val = logic.tryStr2(dis.num.ToString());
@@ -417,8 +285,6 @@ namespace calc
                         break;
                 }
             }
-            dis.realdmg = logic.tryStr2(textBox_antidmg.Text);
-
         }
 
         private void InitChk()
@@ -523,6 +389,146 @@ namespace calc
         {
             if (val == null) return 0;
             return new Logic().tryStr(val.ToString());
+        }
+
+        private void textBox_TextChanged(object sender, EventArgs e)
+        {
+            InitTxt();
+            result();
+        }
+
+        private void checkBox_CheckedChanged(object sender, EventArgs e)
+        {
+            InitChk();
+            result();
+        }
+
+        private void comboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            InitCom();
+            result();
+        }
+
+        private void dataGridView_buf_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            InitGrid();
+            result();
+        }
+
+        private void trackBar_n_Scroll(object sender, EventArgs e)
+        {
+            InitTxt();
+            result();
+        }
+
+        private void ChangeEv()
+        {
+            CheckBox[] chk = new CheckBox[] {
+                checkBox_match,
+                checkBox_pm,
+                checkBox_pl,
+                checkBox_fuku,
+                checkBox_shien,
+                checkBox_vec,
+                checkBox_vecm,
+                checkBox_vecl,
+                checkBox_lnk,
+                checkBox_anas,
+                checkBox_anam,
+                checkBox_break
+            };
+            foreach (CheckBox i in chk) i.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
+
+            ComboBox[] com = new ComboBox[]
+            {
+                comboBox_type,
+                comboBox_super,
+                comboBox_bonus,
+                comboBox_def,
+                comboBox_sp,
+                comboBox_sp2
+            };
+            foreach (ComboBox i in com) i.SelectedIndexChanged += new System.EventHandler(this.comboBox_SelectedIndexChanged);
+
+            TextBox[] txt = new TextBox[]
+            {
+                textBox_slv,
+                textBox_atkA,
+                textBox_atkB,
+                textBox_hp,
+                textBox_maxhp,
+                textBox_atkBonus,
+                textBox_chrBonus,
+                textBox_antidmg
+            };
+            foreach (TextBox i in txt) i.TextChanged += new System.EventHandler(this.textBox_TextChanged);
+
+            comboBox_def.TextChanged += new System.EventHandler(this.textBox_TextChanged);
+            trackBar_n.Scroll += new System.EventHandler(this.trackBar_n_Scroll);
+            dataGridView_buf.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_buf_CellValueChanged);
+        }
+
+        private void Button_ClickSav(object sender, EventArgs e)
+        {
+            var table = new Dictionary<string, ComboBox>
+            {
+                { "COL", comboBox_type },
+                { "SUP", comboBox_super },
+                { "BONUS", comboBox_bonus },
+                { "DEF", comboBox_def },
+                { "SP1", comboBox_sp },
+                { "SP2", comboBox_sp2 }
+            };
+            dis.idx = logic.Loadidxall();
+            foreach (T_objectDto i in dis.idx)
+            {
+                foreach (string key in table.Keys)
+                {
+                    if (i.pk == key) i.val = logic.tryStr2(table[key].SelectedIndex.ToString());
+                }
+            }
+            logic.UpdateBuf(dis.buflist);
+            logic.UpdateTxt(dis.txt);
+            logic.UpdateChk(dis.chk);
+            logic.UpdateIdx(dis.idx);
+            MessageBox.Show("現在の状態を保存しました。", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        private void Button_ClickClear(object sender, EventArgs e)
+        {
+            ComBoxView2();
+            TxtBoxView();
+            ChkBoxView();
+            //
+            DataGridView d = dataGridView_buf;
+            for (int i = 0; i < d.RowCount; i++)
+            {
+                for (int j = 0; j < d.ColumnCount; j++) d[j, i].Value = "0";
+            }
+            DataGridView d2 = dataGridView_res;
+            for (int i = 0; i < d2.RowCount; i++)
+            {
+                for (int j = 0; j < d2.ColumnCount; j++) d2[j, i].Value = "0";
+            }
+            InitGrid();
+        }
+        private void Button_ClickOut(object sender, EventArgs e)
+        {
+            using (StreamWriter sw = new StreamWriter(@"result.txt", false, Encoding.UTF8))
+            {
+                sw.WriteLine("計算結果");
+                sw.WriteLine("加護(中, 大) :実値");
+                DataGridView d = dataGridView_res;
+                for (int j = 0; j < d.ColumnCount; j++)
+                {
+                    sw.WriteLine(col2[j]);
+                    for (int i = 0; i < d.RowCount; i++)
+                    {
+                        sw.WriteLine(dis.feslist[i].header + " :" + d[j, i].Value);
+                    }
+                    sw.WriteLine("");
+                }
+            }
+            System.Diagnostics.Process.Start("notepad.exe", @"result.txt");
         }
 
         private void result()
