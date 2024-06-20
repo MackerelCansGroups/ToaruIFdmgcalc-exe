@@ -1,4 +1,3 @@
-# ToaruIFdmgcalc
 # How To Use
 - Install .NET Framework4.7(Win10)
 - Run exe
