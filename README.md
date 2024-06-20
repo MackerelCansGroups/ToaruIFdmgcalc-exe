@@ -3,5 +3,5 @@
 - Run exe
 # History
 v1.0.0
-- Deploy: basic UI and damage calculation
-- Future tasks: Modify rounding error
+- Deploy: based UI and damage calculation
+- Future task: Modify rounding error
