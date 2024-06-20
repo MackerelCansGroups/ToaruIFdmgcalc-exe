@@ -1,7 +1,7 @@
 # How To Use
 - Install .NET Framework4.7 on Win10
 - Run exe
-# How To Update
+# How To Customize
 - Edit index.db
 # Changed
 v1.0.0
