@@ -5,5 +5,5 @@
 - Edit index.db
 # Changed
 v1.0.0
-- Create: based UI and damage calculation
+- Create a based UI and a function which calc damage
 - Future task: fix rounding error
