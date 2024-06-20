@@ -25,7 +25,7 @@ namespace calc
             ChkBoxView();
             ChangeEv();
             result();
-            this.Text = "とあるIFダメージ計算@ちゃんサバ";
+            this.Text = "とあるIFダメージ計算 ©サバ缶";
             this.Icon = new System.Drawing.Icon(@"icon.ico");
         }
 
@@ -42,7 +42,8 @@ namespace calc
 
             DataGridView d = dataGridView_buf;
             d.ColumnCount = col1.Length;
-            d.RowCount = dis.buflist.Count();
+            d.RowCount = dis.buflist.Count() + 1;
+            d.AllowUserToAddRows = false;
             for (int i = 0; i < d.ColumnCount; i++) d.Columns[i].Name = col1[i];
             for (int i = 0; i < d.RowCount; i++)
             {
@@ -65,7 +66,8 @@ namespace calc
 
             DataGridView d2 = dataGridView_res;
             d2.ColumnCount = col2.Length;
-            d2.RowCount = dis.feslist.Count();
+            d2.RowCount = dis.feslist.Count() + 1;
+            d2.AllowUserToAddRows = false;
             for (int i = 0; i < d2.ColumnCount; i++) d2.Columns[i].Name = col2[i];
             for (int i = 0; i < d2.RowCount; i++) d2.Rows[i].HeaderCell.Value = dis.feslist[i].header;
             d2.DefaultCellStyle.NullValue = "0";
@@ -372,7 +374,6 @@ namespace calc
         private void InitGrid()
         {
             DataGridView d = dataGridView_buf;
-            d.AllowUserToAddRows = true;
             d.DefaultCellStyle.NullValue = "0";
             int count = 0;
             foreach (T_bufDto i in dis.buflist)
@@ -384,7 +385,6 @@ namespace calc
                 i.cntxxl = Cast(d[4, count].Value);
                 count++;
             }
-            d.AllowUserToAddRows = false;
         }
 
         private static int Cast(object val)
@@ -536,7 +536,6 @@ namespace calc
         private void result()
         {
             DataGridView d = dataGridView_res;
-            d.AllowUserToAddRows = true;
             dis.feslist = c.resultLst(dis);
             int count = 0;
             foreach (T_resultDto i in dis.feslist)
@@ -545,7 +544,6 @@ namespace calc
                 for(int j = 0; j < tmp.Length; j++) d[j, count].Value = tmp[j];
                 count++;
             }
-            d.AllowUserToAddRows = false;
         }
     }
 }
