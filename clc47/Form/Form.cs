@@ -25,8 +25,8 @@ namespace calc
             ChkBoxView();
             ChangeEv();
             result();
-            //this.Text = "とあるIFダメージ計算@ちゃんサバ";
-            //this.Icon = new System.Drawing.Icon(@"icon.ico");
+            this.Text = "とあるIFダメージ計算@ちゃんサバ";
+            this.Icon = new System.Drawing.Icon(@"icon.ico");
         }
 
         private void Form_Load(object sender, EventArgs e) { }
@@ -372,6 +372,7 @@ namespace calc
         private void InitGrid()
         {
             DataGridView d = dataGridView_buf;
+            d.AllowUserToAddRows = true;
             d.DefaultCellStyle.NullValue = "0";
             int count = 0;
             foreach (T_bufDto i in dis.buflist)
@@ -383,6 +384,7 @@ namespace calc
                 i.cntxxl = Cast(d[4, count].Value);
                 count++;
             }
+            d.AllowUserToAddRows = false;
         }
 
         private static int Cast(object val)
@@ -534,6 +536,7 @@ namespace calc
         private void result()
         {
             DataGridView d = dataGridView_res;
+            d.AllowUserToAddRows = true;
             dis.feslist = c.resultLst(dis);
             int count = 0;
             foreach (T_resultDto i in dis.feslist)
@@ -542,6 +545,7 @@ namespace calc
                 for(int j = 0; j < tmp.Length; j++) d[j, count].Value = tmp[j];
                 count++;
             }
+            d.AllowUserToAddRows = false;
         }
     }
 }
