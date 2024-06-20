@@ -25,7 +25,7 @@ namespace calc
             ChkBoxView();
             ChangeEv();
             result();
-            this.Text = "とあるIFダメージ計算v1.0.0 ©2024 サバ缶";
+            this.Text = "とあるIFダメージ計算v1.0.0";
             this.Icon = new System.Drawing.Icon(@"icon.ico");
         }
 
