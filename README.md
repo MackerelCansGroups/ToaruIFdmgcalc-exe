@@ -1,9 +1,9 @@
 # How To Use
-- Install .NET Framework4.7(Win10)
+- Install .NET Framework4.7 on Win10
 - Run exe
 # How To Update
 - Edit index.db
-# History
+# Changed
 v1.0.0
-- Deploy: based UI and damage calculation
-- Future task: Modify rounding error
+- Create: based UI and damage calculation
+- Future task: fix rounding error
