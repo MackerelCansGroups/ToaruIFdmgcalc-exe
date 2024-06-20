@@ -25,7 +25,7 @@ namespace calc
             ChkBoxView();
             ChangeEv();
             result();
-            this.Text = "とあるIFダメージ計算 ©サバ缶";
+            this.Text = "とあるIFダメージ計算v1.0.0 ©2024 サバ缶";
             this.Icon = new System.Drawing.Icon(@"icon.ico");
         }
 
@@ -63,6 +63,10 @@ namespace calc
             }
             d.DefaultCellStyle.NullValue = "0";
             d.TopLeftHeaderCell.Value = "個数";
+            foreach (DataGridViewColumn c in d.Columns)
+            {
+                c.SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
 
             DataGridView d2 = dataGridView_res;
             d2.ColumnCount = col2.Length;
@@ -74,6 +78,7 @@ namespace calc
             d2.TopLeftHeaderCell.Value = "加護(中, 大)";
             if (d.GetClipboardContent() != null) Clipboard.SetDataObject(d.GetClipboardContent());
             if (d2.GetClipboardContent() != null) Clipboard.SetDataObject(d2.GetClipboardContent());
+            foreach (DataGridViewColumn c in d2.Columns)
             InitGrid();
         }
 
@@ -544,6 +549,7 @@ namespace calc
                 for(int j = 0; j < tmp.Length; j++) d[j, count].Value = tmp[j];
                 count++;
             }
+            for (int i = 0; i < d.RowCount; i++) d.Rows[i].HeaderCell.Value = dis.feslist[i].header;
         }
     }
 }
