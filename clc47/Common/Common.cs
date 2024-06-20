@@ -284,9 +284,12 @@ namespace calc
         {
             double d = dto.realdmg;
             d = antibuf_down("CUT", d, 1);
-            d /= Math.Floor(dto.breakBuf);
-            d /= Math.Floor(1 + dto.chrBonus / 100);
-            d /= Math.Floor(dto.partyBuf);
+            d /= dto.breakBuf;
+            d = Math.Floor(d);
+            d /= 1 + dto.chrBonus / 100;
+            d = Math.Floor(d);
+            d /= dto.partyBuf;
+            d = Math.Floor(d);
             //
             if (chkSSP(dto.sp1) > 0)
             {
@@ -299,8 +302,10 @@ namespace calc
             //
             d = antibuf_up2("CRI_POW", "CRI_DEF", d, dto.slv, 0.5);
             //
-            d /= Math.Floor(dto.superBuf);
-            d /= Math.Floor(dto.colorBuf);
+            d /= dto.superBuf;
+            d = Math.Floor(d);
+            d /= dto.colorBuf;
+            d = Math.Floor(d);
             d = antiBase(d, atk_);
             return (int)antibuf_down("DEF", d, dto.slv);
         }
